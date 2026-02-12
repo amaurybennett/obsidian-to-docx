@@ -31,10 +31,27 @@ jobs:
             main.js
             manifest.json
 
+      - name: Generate release notes
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: notes
+        run: |
+          PREV_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sed -n '2p')
+          if [ -n "$PREV_TAG" ]; then
+            LOG=$(git log --pretty=format:"- %s" "$PREV_TAG"..HEAD)
+          else
+            LOG=$(git log --pretty=format:"- %s")
+          fi
+          {
+            echo "body<<EOF"
+            echo "$LOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          body: ${{ steps.notes.outputs.body }}
           files: |
             main.js
             manifest.json
