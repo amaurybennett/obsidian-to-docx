@@ -1,4 +1,4 @@
-# Export to Docx
+# Obsidian to Docx
 
 An [Obsidian](https://obsidian.md) plugin that exports a folder of markdown notes into a single Word (.docx) file.
 

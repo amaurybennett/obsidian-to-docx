@@ -1,6 +1,6 @@
 {
-	"id": "export-to-docx",
-	"name": "Export to Word",
+	"id": "obsidian-to-docx",
+	"name": "Obsidian to Docx",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "Export notes as Word (.docx) documents.",

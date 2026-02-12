@@ -99,7 +99,7 @@ function markdownToDocxParagraphs(body: string): Paragraph[] {
 
 export default class ExportToDocxPlugin extends Plugin {
 	async onload() {
-		console.log("Loading Export to Docx plugin...");
+		console.log("Loading Obsidian to Docx plugin...");
 		this.registerEvent(
 			this.app.workspace.on("file-menu", (menu, file) => {
 				if (!(file instanceof TFile) || file.extension !== "md") return;
