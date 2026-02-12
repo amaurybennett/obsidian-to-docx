@@ -8,6 +8,10 @@ import {
 	Paragraph,
 	TextRun,
 } from "docx";
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
+import type { Root, PhrasingContent } from "mdast";
 
 const docStyles = {
 	paragraphStyles: [
@@ -35,6 +39,63 @@ const docStyles = {
 		},
 	],
 };
+
+interface InlineFlags {
+	bold?: boolean;
+	italics?: boolean;
+	strike?: boolean;
+}
+
+function inlineToRuns(node: PhrasingContent, flags: InlineFlags): TextRun[] {
+	switch (node.type) {
+		case "text":
+			return [new TextRun({ text: node.value, ...flags })];
+		case "strong":
+			return node.children.flatMap((c) =>
+				inlineToRuns(c, { ...flags, bold: true })
+			);
+		case "emphasis":
+			return node.children.flatMap((c) =>
+				inlineToRuns(c, { ...flags, italics: true })
+			);
+		case "delete":
+			return node.children.flatMap((c) =>
+				inlineToRuns(c, { ...flags, strike: true })
+			);
+		default:
+			// Unsupported inline nodes (links, images, code, etc.) → plain text
+			if ("value" in node) {
+				return [new TextRun({ text: (node as { value: string }).value, ...flags })];
+			}
+			if ("children" in node) {
+				return (node as { children: PhrasingContent[] }).children.flatMap(
+					(c) => inlineToRuns(c, flags)
+				);
+			}
+			return [];
+	}
+}
+
+function markdownToDocxParagraphs(body: string): Paragraph[] {
+	const tree = unified().use(remarkParse).use(remarkGfm).parse(body) as Root;
+	const paragraphs: Paragraph[] = [];
+
+	for (const node of tree.children) {
+		if (node.type === "paragraph") {
+			const runs = node.children.flatMap((c) => inlineToRuns(c, {}));
+			paragraphs.push(new Paragraph({ children: runs }));
+		} else {
+			// Non-paragraph blocks (lists, code, blockquote, etc.) → plain text fallback
+			const text = body.slice(
+				node.position!.start.offset!,
+				node.position!.end.offset!
+			);
+			paragraphs.push(new Paragraph({ children: [new TextRun(text)] }));
+		}
+	}
+
+	return paragraphs;
+}
 
 export default class ExportToDocxPlugin extends Plugin {
 	async onload() {
@@ -86,15 +147,9 @@ export default class ExportToDocxPlugin extends Plugin {
 			const content = await this.app.vault.read(child);
 			const fmPos = cache?.frontmatterPosition;
 			const bodyStart = fmPos ? fmPos.end.line + 1 : 0;
-			const lines = content.split("\n").slice(bodyStart);
+			const body = content.split("\n").slice(bodyStart).join("\n");
 
-			for (const line of lines) {
-				paragraphs.push(
-					new Paragraph({
-						children: [new TextRun(line)],
-					})
-				);
-			}
+			paragraphs.push(...markdownToDocxParagraphs(body));
 		}
 
 		const doc = new Document({
