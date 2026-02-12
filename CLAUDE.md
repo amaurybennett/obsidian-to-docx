@@ -42,3 +42,7 @@ GitHub Actions workflow at `.github/workflows/build.yml`:
 ## Manual testing
 
 After `npm run build`, reload Obsidian (Ctrl+R), right-click a folder containing markdown notes, and choose "Export as Word document". The `.docx` is written next to the folder.
+
+## Git repo management
+
+Before pushing to `main`, increment the patch version in `manifest.json` (e.g. `0.1.0` → `0.1.1`). For releases, create a semver tag (`git tag v0.1.1`) and push it (`git push origin v0.1.1`).
