@@ -1,0 +1,9 @@
+{
+	"id": "export-to-docx",
+	"name": "Export to Word",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Export notes as Word (.docx) documents.",
+	"author": "Amauray Bennett",
+	"isDesktopOnly": true
+}
