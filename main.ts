@@ -102,20 +102,6 @@ export default class ExportToDocxPlugin extends Plugin {
 		console.log("Loading Obsidian to Docx plugin...");
 		this.registerEvent(
 			this.app.workspace.on("file-menu", (menu, file) => {
-				if (!(file instanceof TFile) || file.extension !== "md") return;
-
-				menu.addItem((item) => {
-					item.setTitle("Export as Word document")
-						.setIcon("file-output")
-						.onClick(() => {
-							console.log("Hello, docx !");
-						});
-				});
-			})
-		);
-
-		this.registerEvent(
-			this.app.workspace.on("file-menu", (menu, file) => {
 				if (!(file instanceof TFolder)) return;
 
 				menu.addItem((item) => {
