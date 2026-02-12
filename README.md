@@ -8,6 +8,7 @@ An [Obsidian](https://obsidian.md) plugin that exports a folder of markdown note
 - Each note becomes a chapter, starting on a new page with an H1 title
 - Inline markdown formatting is preserved: **bold**, *italic*, ***bold-italic***, ~~strikethrough~~
 - Chapter titles are pulled from the `dxtitle` frontmatter field (falls back to the filename)
+- Optional integration with the [Notebook Navigator](https://github.com/jobedom/obsidian-notebook-navigator) plugin for folder menu registration
 
 ## Installation
 

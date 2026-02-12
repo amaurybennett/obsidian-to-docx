@@ -12,6 +12,7 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import type { Root, PhrasingContent } from "mdast";
+import type { NotebookNavigatorAPI } from "./notebook-navigator";
 
 const docStyles = {
 	paragraphStyles: [
@@ -98,8 +99,11 @@ function markdownToDocxParagraphs(body: string): Paragraph[] {
 }
 
 export default class ExportToDocxPlugin extends Plugin {
+	private nnDispose?: () => void;
+
 	async onload() {
 		console.log("Loading Obsidian to Docx plugin...");
+
 		this.registerEvent(
 			this.app.workspace.on("file-menu", (menu, file) => {
 				if (!(file instanceof TFolder)) return;
@@ -111,6 +115,26 @@ export default class ExportToDocxPlugin extends Plugin {
 				});
 			})
 		);
+
+		const nn = (this.app as any).plugins?.plugins["notebook-navigator"]
+			?.api as Partial<NotebookNavigatorAPI> | undefined;
+
+		if (nn?.menus) {
+			const dispose = nn.menus.registerFolderMenu(({ addItem, folder }) => {
+				addItem((item) => {
+					item.setTitle("Export as Word document")
+						.setIcon("file-output")
+						.onClick(() => this.exportFolder(folder));
+				});
+			});
+			if (dispose) {
+				this.nnDispose = dispose;
+			}
+		}
+	}
+
+	onunload() {
+		this.nnDispose?.();
 	}
 
 	async exportFolder(folder: TFolder) {
