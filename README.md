@@ -11,9 +11,16 @@ An [Obsidian](https://obsidian.md) plugin that exports a folder of markdown note
 
 ## Installation
 
-### Manual
+### From a release
 
-1. Clone this repository into your vault's `.obsidian/plugins/` directory
+1. Download `main.js` and `manifest.json` from the [latest release](../../releases/latest)
+2. Create a folder `.obsidian/plugins/obsidian-to-docx/` in your vault
+3. Place both files inside it
+4. Enable the plugin in Obsidian → Settings → Community plugins
+
+### From source
+
+1. Clone this repository into your vault's `.obsidian/plugins/obsidian-to-docx/` directory
 2. Install dependencies and build:
    ```
    npm install

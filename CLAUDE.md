@@ -20,7 +20,7 @@ An Obsidian plugin that exports a folder of markdown notes into a single `.docx`
 
 Everything lives in a single file: **`main.ts`**.
 
-- **`ExportToDocxPlugin`** — The Obsidian `Plugin` subclass. Registers two file-menu events (one for single files, one for folders). The folder handler calls `exportFolder()`.
+- **`ObsidianToDocxPlugin`** — The Obsidian `Plugin` subclass. Registers two file-menu events (one for single files, one for folders). The folder handler calls `exportFolder()`.
 - **`exportFolder(folder)`** — Iterates over markdown files in the folder. For each file, reads the `dxtitle` frontmatter field (falls back to filename) as an H1, then passes the post-frontmatter body to `markdownToDocxParagraphs()`. Assembles a `Document` with `docx` and writes the packed buffer via Obsidian's vault adapter.
 - **`markdownToDocxParagraphs(body)`** — Parses markdown into an mdast AST using `unified` + `remark-parse` + `remark-gfm`. Paragraph nodes have their inline children converted to formatted `TextRun` objects; other block types fall back to plain text.
 - **`inlineToRuns(node, flags)`** — Recursively converts mdast inline nodes (`text`, `strong`, `emphasis`, `delete`) into `TextRun[]`, accumulating bold/italic/strike flags through nesting.
@@ -31,6 +31,12 @@ Everything lives in a single file: **`main.ts`**.
 - **`docx`** — Generates .docx files (`Document`, `Paragraph`, `TextRun`, `Packer`)
 - **`unified` / `remark-parse` / `remark-gfm`** — Parses markdown to mdast AST (including GFM strikethrough)
 - **`obsidian`** — Obsidian plugin API (external, not bundled)
+
+## CI / Releases
+
+GitHub Actions workflow at `.github/workflows/build.yml`:
+- Pushes to `main` and PRs: builds and uploads `main.js` + `manifest.json` as an artifact
+- Pushing a semver tag (`v*.*.*`): also creates a GitHub release with those files attached
 
 ## Manual testing
 
