@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-to-docx",
-	"version": "1.0.0",
+	"version": "0.0.6",
 	"description": "Export notes as Word (.docx) documents.",
 	"main": "main.js",
 	"scripts": {

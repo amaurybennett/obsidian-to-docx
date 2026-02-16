@@ -140,7 +140,9 @@ export default class ExportToDocxPlugin extends Plugin {
 	async exportFolder(folder: TFolder) {
 		const paragraphs: Paragraph[] = [];
 
-		for (const child of folder.children) {
+		const children = [...folder.children].sort((a, b) => a.name.localeCompare(b.name));
+
+		for (const child of children) {
 			if (!(child instanceof TFile) || child.extension !== "md") continue;
 
 			const cache = this.app.metadataCache.getFileCache(child);
